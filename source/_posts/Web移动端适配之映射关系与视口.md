@@ -36,7 +36,7 @@ browser.width === device.width 恒成立
 
 涉及到的映射关系：
 1. 未缩放时html => browser = html.width=>browser.width = 1 : device.width / default_html_width
-2. 缩放时html => browser = 1 : device.width * scaleRatio / default_html_width
+2. 缩放时html => browser = 1 : device.width \* scaleRatio / default_html_width
 
 总结映射关系：
 > PC端：
@@ -53,10 +53,10 @@ browser.width === device.width 恒成立
 那这么看来，default-initial-scale = 1的情况不就和PC端一样了么？是的，映射关系是一样的。但是如果我们改一下，把所有变量都列出来，就有区别了
 > PC端：
 > 未缩放时html => browser = html.width : html.width
-> 缩放时html => browser = html.width : scaleRatio * html.width
+> 缩放时html => browser = html.width : scaleRatio \* html.width
 > 移动端：
 > 未缩放时html => browser = 1 : default-initial-scale
-> 缩放时html => browser = 1 : scaleRatio * default-initial-scale
+> 缩放时html => browser = 1 : scaleRatio \* default-initial-scale
 
 PC端改变html大小的方法很多，但在移动端，缩放不会改变html大小，甚至大部分移动设备旋转屏幕也不会，（凡事都有例外，当屏幕旋转后超出default_html_width的时候会改变html的大小，因为这时候就相当于是PC端了（比如iPad））所以可以把它当做常量看。
 
@@ -77,13 +77,13 @@ PC端改变html大小的方法很多，但在移动端，缩放不会改变html�
 
 我还是取来上一次说的设备A和B
 > A设备：
-> 物理尺寸：10cm * 20cm
-> 像素： 320cm * 640cm
+> 物理尺寸：10cm \* 20cm
+> 像素： 320cm \* 640cm
 > 像素密度： 32px/cm
 
 > B设备：
-> 物理尺寸：10cm * 20cm
-> 像素： 640cm * 1280cm
+> 物理尺寸：10cm \* 20cm
+> 像素： 640cm \* 1280cm
 > 像素密度： 64px/cm
 
 如果按照上面的计算规则，在我们把initial-scale都设为1的情况下，对于一个16px的文字
@@ -120,46 +120,46 @@ PC端改变html大小的方法很多，但在移动端，缩放不会改变html�
 
 我们修改一下我们的映射关系
 > 移动端：
-> 未缩放时html => browser = 1 : device.width / (default_html_width * DPR)
-> 缩放时html => browser = 1 : device.width * scaleRatio / (default_html_width * DPR)
+> 未缩放时html => browser = 1 : device.width / (default_html_width \* DPR)
+> 缩放时html => browser = 1 : device.width \* scaleRatio / (default_html_width \* DPR)
 
 好了，这样子就完美了。我们再重新看这个东西，device.width是常量，DPR呢？我们说这个是由设备厂家给出的定值，比如苹果厂家为iphone5设计的DPR=2，而default_html_width也是常量。
 
-那么我们可以重新定义default-initial-scale = device.width / (default_html_width * DPR);
+那么我们可以重新定义default-initial-scale = device.width / (default_html_width \* DPR);
 > 移动端：
 > 未缩放时html => browser = 1 : default-initial-scale
-> 缩放时html => browser = 1 : scaleRatio * default-initial-scale
+> 缩放时html => browser = 1 : scaleRatio \* default-initial-scale
 
 这时候我们看起来又回到了原始的位置……但其实我们再次尝试设置initial-scale的时候
 
 # 全新的initial-scale
-因为device.width / (default_html_width * DPR)中的device.width，DPR是绝对不会变的，只有html_width有商量的余地。
+因为device.width / (default_html_width \* DPR)中的device.width，DPR是绝对不会变的，只有html_width有商量的余地。
 
 所以当你修改initial-scale的时候，仍然只会影响html_width的值。
-> html_width = device.width / (DPR * initial-scale)
+> html_width = device.width / (DPR \* initial-scale)
 
 继续来看设备A和B，这次设备厂家给我们提供了新数据
 > A设备：
-> 物理尺寸：10cm * 20cm
-> 像素： 320cm * 640cm
+> 物理尺寸：10cm \* 20cm
+> 像素： 320cm \* 640cm
 > 像素密度： 32px/cm
 > DPR：1
 
 > B设备：
-> 物理尺寸：10cm * 20cm
-> 像素： 640cm * 1280cm
+> 物理尺寸：10cm \* 20cm
+> 像素： 640cm \* 1280cm
 > 像素密度： 64px/cm
 > DPR：2
 
 如果按照上面的计算规则，在我们把initial-scale都设为1的情况下，对于一个16px的文字
 > A设备：
-> html_width = 320 / (1 * 1) = 320
+> html_width = 320 / (1 \* 1) = 320
 > 映射关系： 320 => 320
 > 实际像素： x / 16 = 320 / 320 => x = 16px
 > 实际长度： l = 16px / 32(px/cm) = 0.5cm
 
 > B设备：
-> html_width = 640 / (1 * 2) = 320
+> html_width = 640 / (1 \* 2) = 320
 > 映射关系： 320 => 640
 > 实际像素： x / 16 = 640 / 320 => x = 32px
 > 实际长度： l = 32 / 64 = 0.5cm
@@ -185,7 +185,7 @@ PC端改变html大小的方法很多，但在移动端，缩放不会改变html�
 ``` html
     <meta name="viewport" content="width=400">
 ```
-意思就是让html_width=400px，不过这种设置方法……不会影响到initial-scale。说的清楚一点就是……你如果这么写，你的initial-scale = default-initial-scale = device.width / (default_html_width * DPR)，而不是你期待的device.width / (400 * DPR)。
+意思就是让html_width=400px，不过这种设置方法……不会影响到initial-scale。说的清楚一点就是……你如果这么写，你的initial-scale = default-initial-scale = device.width / (default_html_width \* DPR)，而不是你期待的device.width / (400 \* DPR)。
 
 如果你希望修改initial-scale
 ```html
