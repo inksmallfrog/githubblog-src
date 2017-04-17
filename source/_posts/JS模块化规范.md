@@ -18,6 +18,8 @@ Nodejs
 通过文件组织模块，文件内的定义对模块私有
 每个模块通过module.exports导出，通过require()导入
 
+<!--more-->
+
 ## 核心对象
 ### require——引用
 ``` js
